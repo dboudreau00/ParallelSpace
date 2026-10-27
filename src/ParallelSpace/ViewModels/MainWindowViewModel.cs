@@ -27,6 +27,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
     /// <summary>Set by the app: shows the add/edit dialog and returns true if saved.</summary>
     public Func<EditSpaceViewModel, Task<bool>>? ShowEditor { get; set; }
 
+    /// <summary>Set by the app: shows a confirmation dialog and returns true if accepted.</summary>
+    public Func<string, string, Task<bool>>? ShowConfirmation { get; set; }
+
     [ObservableProperty] private string _statusMessage = "Ready.";
     [ObservableProperty] private bool _hasDetectedApps;
     [ObservableProperty] private NavPage _selectedPage = NavPage.Spaces;
@@ -344,15 +347,25 @@ public sealed partial class MainWindowViewModel : ObservableObject
         RefreshStatuses();
     }
 
-    public void CloseSpace(SpaceViewModel vm)
+    public async Task CloseSpace(SpaceViewModel vm)
     {
+        if (ShowConfirmation is null || !await ShowConfirmation(
+                "Close application?",
+                "This application will be closed. You may need to sign in again the next time you launch it."))
+            return;
+
         _launcher.CloseAll(vm.Model);
         StatusMessage = $"Closed {vm.Name}.";
         RefreshStatuses();
     }
 
-    public void RemoveSpace(SpaceViewModel vm)
+    public async Task RemoveSpace(SpaceViewModel vm)
     {
+        if (ShowConfirmation is null || !await ShowConfirmation(
+                "Remove application?",
+                "This application will be removed from your Spaces list. Its profile data folder will remain on your device."))
+            return;
+
         var index = Spaces.IndexOf(vm);
         Spaces.Remove(vm);
 
@@ -413,3 +426,4 @@ public sealed partial class MainWindowViewModel : ObservableObject
         catch (Exception ex) { StatusMessage = $"Couldn't open browser: {ex.Message}"; }
     }
 }
+

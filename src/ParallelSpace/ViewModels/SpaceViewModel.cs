@@ -90,11 +90,12 @@ public sealed partial class SpaceViewModel : ObservableObject
     private bool CanClose() => IsRunning;
 
     [RelayCommand(CanExecute = nameof(CanClose))]
-    private void Close() => _owner.CloseSpace(this);
+    private Task Close() => _owner.CloseSpace(this);
 
     [RelayCommand]
     private void OpenDataFolder() => _owner.OpenDataFolder(this);
 
     [RelayCommand]
-    private void Remove() => _owner.RemoveSpace(this);
+    private Task Remove() => _owner.RemoveSpace(this);
 }
+

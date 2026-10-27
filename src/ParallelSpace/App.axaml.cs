@@ -28,10 +28,15 @@ public partial class App : Application
 
             var window = new MainWindow { DataContext = vm };
 
-            // Wire the add/edit dialog now that both window and view model exist.
+            // Wire dialogs now that both window and view model exist.
             vm.ShowEditor = async editor =>
             {
                 var dialog = new EditSpaceWindow { DataContext = editor };
+                return await dialog.ShowDialog<bool>(window);
+            };
+            vm.ShowConfirmation = async (title, message) =>
+            {
+                var dialog = new ConfirmActionWindow(title, message);
                 return await dialog.ShowDialog<bool>(window);
             };
 
@@ -42,3 +47,4 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 }
+
