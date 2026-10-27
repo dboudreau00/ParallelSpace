@@ -211,7 +211,8 @@
                             <TextBlock Text="DETECTED ON THIS PC — click to add one as a space" FontSize="10.5"
                                        FontWeight="SemiBold" Foreground="{DynamicResource FaintTextBrush}" />
                             <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                          VerticalScrollBarVisibility="Disabled">
+                                          VerticalScrollBarVisibility="Disabled"
+                                          AllowAutoHide="False">
                                 <ItemsControl ItemsSource="{Binding DetectedApps}" x:CompileBindings="False">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
