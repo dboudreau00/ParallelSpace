@@ -198,7 +198,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="3" Spacing="2" Margin="8,0,0,0">
-                        <TextBlock Text="v1.1.0" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" />
+                        <TextBlock Text="v1.2.0" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" />
                     </StackPanel>
                 </Grid>
             </Border>

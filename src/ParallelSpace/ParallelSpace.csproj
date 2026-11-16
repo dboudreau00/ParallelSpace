@@ -10,9 +10,9 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <RootNamespace>ParallelSpace</RootNamespace>
     <AssemblyName>ParallelSpace</AssemblyName>
-    <Version>1.1.0</Version>
-    <FileVersion>1.1.0.0</FileVersion>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <Version>1.2.0</Version>
+    <FileVersion>1.2.0.0</FileVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <Product>Parallel Space</Product>
     <Company>Parallel Space</Company>
     <Description>Run isolated, parallel copies of any app so you can be signed into several accounts at once.</Description>

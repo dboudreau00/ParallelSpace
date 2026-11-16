@@ -11,7 +11,7 @@ Two Chrome profiles. Three Telegram accounts. A work Slack and a client Slack.
 Each copy gets its own profile, so each one is a separate login.
 
 [![build](https://github.com/dboudreau00/ParallelSpace/actions/workflows/build.yml/badge.svg)](https://github.com/dboudreau00/ParallelSpace/actions/workflows/build.yml)
-![version](https://img.shields.io/badge/version-1.1.0-3ba55d)
+![version](https://img.shields.io/badge/version-1.2.0-3ba55d)
 ![platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011%20(x64)-4F5BD5)
 ![.NET](https://img.shields.io/badge/.NET-9-512BD4)
 ![license](https://img.shields.io/badge/license-MIT-blue)
@@ -84,7 +84,7 @@ add yourself and pick the technique.
 
 ## Download
 
-1. Grab **`ParallelSpace-v1.1.0-win-x64.zip`** from
+1. Grab **`ParallelSpace-v1.2.0-win-x64.zip`** from
    [**Releases**](https://github.com/dboudreau00/ParallelSpace/releases/latest).
 2. Unzip and run **`ParallelSpace.exe`**.
 
