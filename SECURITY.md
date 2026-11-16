@@ -17,6 +17,15 @@ starts other programs on your behalf:
   `%APPDATA%\ParallelSpace\Spaces\<id>`.
 - **It reads Start Menu shortcuts** to list detected apps. This is read-only: it
   resolves `.lnk` targets and never launches anything while scanning.
+- **Start with Windows is off by default.** Turning it on adds one string value,
+  `ParallelSpace`, to `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
+  that starts `ParallelSpace.exe --background`; turning it off deletes it. Nothing is
+  written machine-wide and no scheduled task or service is created. If you disable
+  the entry in Windows Settings or Task Manager, the app respects that.
+- **It keeps one copy running per Windows session** using a named mutex and event
+  scoped to your logon session, and can stay in the notification area when you ask it
+  to. Spaces you mark "Launch when Parallel Space starts" are started with the same
+  program and arguments you see in their editor.
 - **It does not patch, inject into, or modify any other application**, and it makes no
   network requests. The only outbound action is opening a vendor's official download
   page in your browser when you click "Get it".
