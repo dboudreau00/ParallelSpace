@@ -40,6 +40,9 @@ public sealed class Space
     /// </summary>
     public string DiscordChannel { get; set; } = "";
 
+    /// <summary>Launch this space whenever Parallel Space starts (unless it is already running).</summary>
+    public bool LaunchOnStart { get; set; } = false;
+
     /// <summary>Catalog preset this space came from (see AppCatalog). Empty for hand-added apps.</summary>
     public string PresetKey { get; set; } = "";
 
@@ -57,5 +60,12 @@ public sealed class SpaceConfig
 
     /// <summary>Selected theme key (see AppThemes). Empty means the default.</summary>
     public string ThemeKey { get; set; } = "";
+
+    /// <summary>Minimizing hides the window in the tray instead of the taskbar.</summary>
+    public bool MinimizeToTray { get; set; } = false;
+
+    /// <summary>The close button hides the window in the tray; Quit in the tray menu exits.</summary>
+    public bool CloseToTray { get; set; } = false;
+
     public List<Space> Spaces { get; set; } = new();
 }

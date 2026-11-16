@@ -17,7 +17,11 @@ public sealed partial class MainWindowViewModel : ObservableObject
 {
     private readonly SpaceStore _store;
     private readonly Launcher _launcher;
+    private readonly StartupRegistration _startup;
     private readonly DispatcherTimer _timer;
+
+    // Set while a toggle is being put back, so the change handler doesn't run again.
+    private bool _restoring;
 
     public ObservableCollection<SpaceViewModel> Spaces { get; } = new();
     public ObservableCollection<CatalogItemViewModel> Catalog { get; } = new();
@@ -34,25 +38,29 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public bool IsSpacesPage => SelectedPage == NavPage.Spaces;
     public bool IsCatalogPage => SelectedPage == NavPage.Catalog;
     public bool IsAppearancePage => SelectedPage == NavPage.Appearance;
+    public bool IsStartupPage => SelectedPage == NavPage.Startup;
 
     partial void OnSelectedPageChanged(NavPage value)
     {
         OnPropertyChanged(nameof(IsSpacesPage));
         OnPropertyChanged(nameof(IsCatalogPage));
         OnPropertyChanged(nameof(IsAppearancePage));
+        OnPropertyChanged(nameof(IsStartupPage));
     }
 
     [RelayCommand] private void ShowSpaces() => SelectedPage = NavPage.Spaces;
     [RelayCommand] private void ShowCatalog() => SelectedPage = NavPage.Catalog;
     [RelayCommand] private void ShowAppearance() => SelectedPage = NavPage.Appearance;
+    [RelayCommand] private void ShowStartup() => SelectedPage = NavPage.Startup;
 
     public bool HasSpaces => Spaces.Count > 0;
     public int SpaceCount => Spaces.Count;
 
-    public MainWindowViewModel(SpaceStore store, Launcher launcher)
+    public MainWindowViewModel(SpaceStore store, Launcher launcher, StartupRegistration startup)
     {
         _store = store;
         _launcher = launcher;
+        _startup = startup;
         _launcher.InstancesChanged += OnInstancesChanged;
 
         BuildCatalog();
@@ -64,6 +72,13 @@ public sealed partial class MainWindowViewModel : ObservableObject
             OnPropertyChanged(nameof(HasSpaces));
             OnPropertyChanged(nameof(SpaceCount));
         };
+
+        // Backing fields, not the properties: loading must not run the change handlers.
+        _minimizeToTray = _store.MinimizeToTray;
+        _closeToTray = _store.CloseToTray;
+        _startWithWindows = _startup.IsEnabled();
+        if (_startWithWindows)
+            _startup.Refresh();
 
         BuildThemes();
         RefreshCatalogStates();
@@ -244,6 +259,81 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         foreach (var t in Themes)
             t.IsSelected = string.Equals(t.Key, key, StringComparison.OrdinalIgnoreCase);
+    }
+
+    // ---- Startup and background -------------------------------------------------
+
+    [ObservableProperty] private bool _startWithWindows;
+    [ObservableProperty] private bool _minimizeToTray;
+    [ObservableProperty] private bool _closeToTray;
+
+    /// <summary>False when running from a build with no ParallelSpace.exe to register.</summary>
+    public bool CanRegisterStartup => _startup.CanRegister;
+
+    partial void OnStartWithWindowsChanged(bool value)
+    {
+        if (_restoring)
+            return;
+
+        if (_startup.SetEnabled(value, out var error))
+        {
+            StatusMessage = value
+                ? "Parallel Space will start with Windows, in the tray."
+                : "Parallel Space no longer starts with Windows.";
+            return;
+        }
+
+        // Show what is actually registered, not what was clicked.
+        _restoring = true;
+        StartWithWindows = !value;
+        _restoring = false;
+        StatusMessage = $"Couldn't change the startup entry: {error}";
+    }
+
+    partial void OnMinimizeToTrayChanged(bool value)
+    {
+        _store.MinimizeToTray = value;
+        if (Save())
+            StatusMessage = value
+                ? "Minimizing now hides Parallel Space in the tray."
+                : "Minimizing now uses the taskbar.";
+    }
+
+    partial void OnCloseToTrayChanged(bool value)
+    {
+        _store.CloseToTray = value;
+        if (Save())
+            StatusMessage = value
+                ? "Closing the window now keeps Parallel Space running in the tray."
+                : "Closing the window now quits Parallel Space.";
+    }
+
+    /// <summary>
+    /// Launches every space marked "Launch when Parallel Space starts" that this
+    /// launcher doesn't already see running. Called once, after the window exists.
+    /// </summary>
+    public void LaunchStartupSpaces()
+    {
+        int started = 0;
+        var failures = new System.Collections.Generic.List<string>();
+
+        foreach (var vm in Spaces.Where(s => s.Model.LaunchOnStart))
+        {
+            if (_launcher.GetStatus(vm.Model).Running)
+                continue;
+
+            var result = _launcher.Launch(vm.Model);
+            if (result.Ok)
+                started++;
+            else
+                failures.Add($"{vm.Name} ({result.Error})");
+        }
+
+        RefreshStatuses();
+        if (failures.Count > 0)
+            StatusMessage = $"Couldn't launch on start: {string.Join("; ", failures)}";
+        else if (started > 0)
+            StatusMessage = started == 1 ? "Launched 1 space on start." : $"Launched {started} spaces on start.";
     }
 
     // ---- Detected apps ---------------------------------------------------------

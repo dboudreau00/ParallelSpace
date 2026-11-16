@@ -63,5 +63,55 @@ Console.WriteLine($"  after close running={after.Running} instances={after.Insta
 launcher.Dispose();
 try { Directory.Delete(dataFolder, recursive: true); } catch { }
 
+// Startup entry and single-instance guard, under throwaway names so the real
+// "ParallelSpace" Run value and instance mutex are never touched.
 Console.WriteLine();
-Console.WriteLine("DONE");
+Console.WriteLine("=== Startup entry + single instance ===");
+
+var failed = false;
+void Check(string what, bool ok)
+{
+    Console.WriteLine($"  {(ok ? "PASS" : "FAIL")}  {what}");
+    if (!ok) failed = true;
+}
+
+const string testValue = "ParallelSpace.HarnessTest";
+var testExe = Environment.ProcessPath!;
+var reg = new StartupRegistration(testValue, testExe);
+try
+{
+    Check("a real exe can be registered", reg.CanRegister);
+    Check("dotnet.exe is refused", !new StartupRegistration(testValue, Path.Combine(AppContext.BaseDirectory, "dotnet.exe")).CanRegister);
+    Check("not enabled to begin with", !reg.IsEnabled());
+
+    Check("enable succeeds", reg.SetEnabled(true, out var enableError) && enableError is null);
+    Check("enabled after enable", reg.IsEnabled());
+
+    using (var run = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run"))
+        Check("command is quoted exe + --background",
+            run?.GetValue(testValue) as string == $"\"{testExe}\" {StartupRegistration.BackgroundArg}");
+
+    Check("disable succeeds", reg.SetEnabled(false, out _));
+    Check("gone after disable", !reg.IsEnabled());
+}
+finally
+{
+    reg.SetEnabled(false, out _);
+}
+
+using (var first = new SingleInstance("ParallelSpace.HarnessTest"))
+{
+    Check("first instance owns the guard", first.IsFirst);
+
+    using var second = new SingleInstance("ParallelSpace.HarnessTest");
+    Check("second instance is told it is not first", !second.IsFirst);
+
+    using var shown = new ManualResetEventSlim(false);
+    first.Listen(shown.Set);
+    second.SignalFirst();
+    Check("second launch signals the first", shown.Wait(2000));
+}
+
+Console.WriteLine();
+Console.WriteLine(failed ? "FAILED" : "DONE");
+if (failed) Environment.ExitCode = 1;

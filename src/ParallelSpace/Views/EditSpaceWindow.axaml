@@ -136,6 +136,17 @@
                 </StackPanel>
             </Border>
 
+            <!-- Auto-launch (every space, Discord included) -->
+            <Border Background="{DynamicResource PanelBrush}" CornerRadius="9" Padding="14">
+                <CheckBox IsChecked="{Binding LaunchOnStart}">
+                    <StackPanel Spacing="1">
+                        <TextBlock Text="Launch when Parallel Space starts" Foreground="{DynamicResource TextBrush}" FontWeight="SemiBold" />
+                        <TextBlock Text="Starts this space each time Parallel Space opens, including when it starts with Windows."
+                                   FontSize="11.5" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </CheckBox>
+            </Border>
+
             <!-- Glyph -->
             <StackPanel>
                 <TextBlock Text="Icon" Classes="label" />
