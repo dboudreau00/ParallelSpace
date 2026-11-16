@@ -181,10 +181,24 @@
                                            VerticalAlignment="Center" Classes="navlabel" />
                             </Grid>
                         </Button>
+
+                        <Button Classes="nav" Classes.selected="{Binding IsStartupPage}"
+                                AutomationProperties.Name="Startup"
+                                Command="{Binding ShowStartupCommand}">
+                            <Grid ColumnDefinitions="3,Auto,*" Height="38">
+                                <Border Grid.Column="0" Width="3" CornerRadius="2" Margin="0,7"
+                                        Background="{DynamicResource AccentBrush}"
+                                        IsVisible="{Binding IsStartupPage}" />
+                                <TextBlock Grid.Column="1" Text="⏻" FontSize="15" Margin="11,0,10,0"
+                                           VerticalAlignment="Center" Classes="navlabel" />
+                                <TextBlock Grid.Column="2" Text="Startup" FontSize="13.5" FontWeight="Medium"
+                                           VerticalAlignment="Center" Classes="navlabel" />
+                            </Grid>
+                        </Button>
                     </StackPanel>
 
                     <StackPanel Grid.Row="3" Spacing="2" Margin="8,0,0,0">
-                        <TextBlock Text="v1.1.0" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" />
+                        <TextBlock Text="v1.2.0" FontSize="11" Foreground="{DynamicResource FaintTextBrush}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -497,6 +511,68 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- Startup page -->
+                <Grid IsVisible="{Binding IsStartupPage}" RowDefinitions="Auto,*" Margin="26,22,26,10">
+                    <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+                        <TextBlock Text="Startup" Classes="h1" />
+                        <TextBlock TextWrapping="Wrap" MaxWidth="680" Classes="sub" HorizontalAlignment="Left"
+                                   Text="Keep Parallel Space around in the background. Apps you launch keep running whether or not this window is open; staying in the tray just lets the manager keep tracking them." />
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel Spacing="12" MaxWidth="680" HorizontalAlignment="Left">
+
+                            <Border Classes="card" CornerRadius="11" Padding="18,16">
+                                <CheckBox IsChecked="{Binding StartWithWindows}"
+                                          IsEnabled="{Binding CanRegisterStartup}"
+                                          AutomationProperties.Name="Start with Windows">
+                                    <StackPanel Spacing="2" Margin="6,0,0,0">
+                                        <TextBlock Text="Start with Windows" FontSize="14" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextBrush}" />
+                                        <TextBlock FontSize="12" TextWrapping="Wrap"
+                                                   Foreground="{DynamicResource MutedTextBrush}"
+                                                   Text="Opens Parallel Space when you sign in, hidden in the tray, and launches any spaces set to start with it. Adds one entry to your own startup list; you can also switch it off in Windows Settings." />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <Border Classes="card" CornerRadius="11" Padding="18,16">
+                                <CheckBox IsChecked="{Binding MinimizeToTray}"
+                                          AutomationProperties.Name="Minimize to the tray">
+                                    <StackPanel Spacing="2" Margin="6,0,0,0">
+                                        <TextBlock Text="Minimize to the tray" FontSize="14" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextBrush}" />
+                                        <TextBlock FontSize="12" TextWrapping="Wrap"
+                                                   Foreground="{DynamicResource MutedTextBrush}"
+                                                   Text="Minimizing hides the window in the notification area instead of the taskbar. Click the tray icon to bring it back." />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <Border Classes="card" CornerRadius="11" Padding="18,16">
+                                <CheckBox IsChecked="{Binding CloseToTray}"
+                                          AutomationProperties.Name="Keep running when the window is closed">
+                                    <StackPanel Spacing="2" Margin="6,0,0,0">
+                                        <TextBlock Text="Keep running when the window is closed" FontSize="14" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextBrush}" />
+                                        <TextBlock FontSize="12" TextWrapping="Wrap"
+                                                   Foreground="{DynamicResource MutedTextBrush}"
+                                                   Text="The close button hides the window and leaves Parallel Space running in the tray. Use Quit in the tray menu to exit." />
+                                    </StackPanel>
+                                </CheckBox>
+                            </Border>
+
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Margin="4,4,0,0"
+                                       Foreground="{DynamicResource MutedTextBrush}"
+                                       IsVisible="{Binding !CanRegisterStartup}"
+                                       Text="Start with Windows is unavailable here because this isn't running from a ParallelSpace.exe." />
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Margin="4,4,0,0"
+                                       Foreground="{DynamicResource MutedTextBrush}"
+                                       Text="To start one space automatically, open its ✎ editor and tick “Launch when Parallel Space starts”." />
+                        </StackPanel>
                     </ScrollViewer>
                 </Grid>
             </Panel>

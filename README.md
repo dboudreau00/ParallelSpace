@@ -11,7 +11,7 @@ Two Chrome profiles. Three Telegram accounts. A work Slack and a client Slack.
 Each copy gets its own profile, so each one is a separate login.
 
 [![build](https://github.com/dboudreau00/ParallelSpace/actions/workflows/build.yml/badge.svg)](https://github.com/dboudreau00/ParallelSpace/actions/workflows/build.yml)
-![version](https://img.shields.io/badge/version-1.1.0-3ba55d)
+![version](https://img.shields.io/badge/version-1.2.0-3ba55d)
 ![platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011%20(x64)-4F5BD5)
 ![.NET](https://img.shields.io/badge/.NET-9-512BD4)
 ![license](https://img.shields.io/badge/license-MIT-blue)
@@ -65,6 +65,9 @@ add yourself and pick the technique.
 - ◐ **Six themes** — Midnight, Nord, Carbon, Ember, Daylight (light) and Matrix.
   Every palette is contrast-checked: primary text ≥ 7:1 on every surface, secondary
   ≥ 4.5:1, white on accent ≥ 4.5:1.
+- ⏻ **Startup and tray** — start with Windows, minimize to the tray, keep running
+  when the window is closed, and launch chosen spaces whenever the manager opens.
+  All of it is off until you turn it on.
 - 📦 **Zero install** — one self-contained `.exe`. No .NET runtime, no admin rights.
 
 <div align="center">
@@ -72,11 +75,16 @@ add yourself and pick the technique.
 <br/><sub>The same app in <b>Daylight</b> — themes repaint everything, including the dialogs</sub>
 </div>
 
+<div align="center">
+<img src="docs/startup.png" width="680" alt="Startup page" />
+<br/><sub><b>Startup</b> — run from the tray and start with Windows</sub>
+</div>
+
 ---
 
 ## Download
 
-1. Grab **`ParallelSpace-v1.1.0-win-x64.zip`** from
+1. Grab **`ParallelSpace-v1.2.0-win-x64.zip`** from
    [**Releases**](https://github.com/dboudreau00/ParallelSpace/releases/latest).
 2. Unzip and run **`ParallelSpace.exe`**.
 
@@ -107,6 +115,26 @@ its own profile flag — if it does, put the flag in Arguments and use `{DATA}`:
 **For several Discord accounts:** add *Discord*, *Discord PTB* and *Discord Canary*
 from the catalog. They are separate installs with separate data folders, which is
 what gives each one its own account — no patching involved.
+
+**Running in the background.** The **Startup** page has three switches, all off by
+default:
+
+- **Start with Windows** — opens Parallel Space when you sign in, hidden in the tray.
+  It adds one entry (`ParallelSpace`) to your own startup list and removes it when you
+  switch it off; Windows Settings and Task Manager can disable it too.
+- **Minimize to the tray** — minimizing hides the window instead of using the taskbar.
+- **Keep running when the window is closed** — the close button hides the window.
+  Use **Quit** in the tray menu to exit.
+
+To start an app automatically, open its ✎ editor and tick **Launch when Parallel
+Space starts**. That runs each time the manager opens, including at Windows startup.
+Only one manager runs per Windows session: launching it again brings the running
+window forward.
+
+Staying in the tray matters for one reason: the manager tracks each copy it launched,
+so while it runs, Close and the status dot stay accurate. Quitting it never stops
+your apps, but a restarted manager no longer knows about copies started by the
+previous one.
 
 Spaces are saved to `%APPDATA%\ParallelSpace\spaces.json`, and each space's data
 lives under `%APPDATA%\ParallelSpace\Spaces\<id>`. Closing the manager leaves your
@@ -162,6 +190,8 @@ src/ParallelSpace/
     JobObject.cs         Windows job object wrapper
     ProcessStarter.cs    CreateProcess suspended -> assign to job -> resume
     SpaceStore.cs        spaces.json (atomic) + per-space data folders
+    StartupRegistration.cs   the "Start with Windows" entry in the user's Run key
+    SingleInstance.cs        one manager per session; a second launch shows the first
     AppScanner.cs        Start Menu shortcuts -> detected apps
     ThemeManager.cs      applies a theme to the live resource dictionary
   ViewModels/    MainWindow, Space, EditSpace, CatalogItem, ThemeOption

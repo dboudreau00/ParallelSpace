@@ -4,6 +4,28 @@ All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] — 2026-11-16
+
+Parallel Space can now live in the background.
+
+### Added
+- **Startup page** with three switches, all off by default:
+  **Start with Windows** (one entry in your own startup list; it opens hidden in the
+  tray), **Minimize to the tray**, and **Keep running when the window is closed**.
+- **Tray icon** with Open and Quit. It shows whenever a tray option is on, and always
+  while the window is hidden, so a hidden window can't be lost.
+- **Launch when Parallel Space starts**, per space, in the editor. It runs each time
+  the manager opens, including at Windows startup.
+- **One manager per Windows session.** Launching Parallel Space again brings the
+  running window forward instead of opening a second manager.
+- The Harness checks the startup entry and the single-instance guard under throwaway
+  names, so the real entry is never touched.
+
+### Changed
+- `spaces.json` gains optional `MinimizeToTray`, `CloseToTray` and `LaunchOnStart`
+  fields. Existing files load unchanged.
+- SECURITY.md and the README describe the startup entry and the tray behaviour.
+
 ## [1.1.0] — 2026-08-28
 
 Parallel Space became a general multi-app tool rather than a Discord one.

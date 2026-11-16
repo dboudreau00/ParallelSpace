@@ -37,6 +37,10 @@ public sealed class SpaceStore
     /// <summary>Selected theme key, round-tripped through the same config file.</summary>
     public string ThemeKey { get; set; } = "";
 
+    /// <summary>Tray behaviour, round-tripped like <see cref="ThemeKey"/>.</summary>
+    public bool MinimizeToTray { get; set; }
+    public bool CloseToTray { get; set; }
+
     public List<Space> Load()
     {
         LoadError = null;
@@ -48,6 +52,8 @@ public sealed class SpaceStore
             var json = File.ReadAllText(ConfigPath);
             var config = JsonSerializer.Deserialize<SpaceConfig>(json, JsonOptions);
             ThemeKey = config?.ThemeKey ?? "";
+            MinimizeToTray = config?.MinimizeToTray ?? false;
+            CloseToTray = config?.CloseToTray ?? false;
             return config?.Spaces ?? new List<Space>();
         }
         catch (Exception ex)
@@ -68,6 +74,8 @@ public sealed class SpaceStore
             {
                 Version = 1,
                 ThemeKey = ThemeKey,
+                MinimizeToTray = MinimizeToTray,
+                CloseToTray = CloseToTray,
                 Spaces = new List<Space>(spaces),
             };
             var json = JsonSerializer.Serialize(config, JsonOptions);

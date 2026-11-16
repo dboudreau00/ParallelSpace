@@ -6,4 +6,5 @@ public enum NavPage
     Spaces = 0,
     Catalog = 1,
     Appearance = 2,
+    Startup = 3,
 }

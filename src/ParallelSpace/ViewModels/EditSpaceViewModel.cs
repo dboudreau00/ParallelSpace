@@ -31,6 +31,7 @@ public sealed partial class EditSpaceViewModel : ObservableObject
         _workingDirectory = model.WorkingDirectory ?? "";
         _isolatedProfile = model.Isolation == IsolationMode.IsolatedProfile;
         _appendUserDataDir = model.AppendUserDataDir;
+        _launchOnStart = model.LaunchOnStart;
         _glyph = string.IsNullOrEmpty(model.Glyph) ? "📦" : model.Glyph;
         _accent = string.IsNullOrEmpty(model.Accent) ? "#5865F2" : model.Accent;
     }
@@ -51,6 +52,7 @@ public sealed partial class EditSpaceViewModel : ObservableObject
     [ObservableProperty] private string _workingDirectory;
     [ObservableProperty] private bool _isolatedProfile;
     [ObservableProperty] private bool _appendUserDataDir;
+    [ObservableProperty] private bool _launchOnStart;
     [ObservableProperty] private string _glyph;
     [ObservableProperty] private string _accent;
 
@@ -70,6 +72,7 @@ public sealed partial class EditSpaceViewModel : ObservableObject
         Model.Name = Name.Trim();
         Model.Glyph = Glyph;
         Model.Accent = Accent;
+        Model.LaunchOnStart = LaunchOnStart;
 
         if (!IsDiscord)
         {
