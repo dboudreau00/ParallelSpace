@@ -206,8 +206,7 @@ tools/
 ## Tech
 
 C# / .NET 9, **Avalonia 11** with MVVM (CommunityToolkit.Mvvm). No admin rights;
-everything runs as the current user. The theme palettes were designed in
-[Magic Patterns](https://www.magicpatterns.com/) and verified against WCAG.
+everything runs as the current user. The theme palettes were verified against WCAG.
 
 ## Limitations
 
